@@ -13,7 +13,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     // Объект, отвечающий за генерацию уникальных id
     private final AtomicInteger currentId = new AtomicInteger(1);
-    private User user;
+    private User activeUser;
+
+    // Поле перемесщено в метод под названием createUser
+    // private User user;
 
 
     public UserRepositoryImpl() {
@@ -25,6 +28,19 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User createUser(String email, String password){
+        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("EMAIL И PASSWORD НЕ МОЖЕТ БЫТЬ ПУСТЫМ!!!");
+        }
+
+        if (existsByEmail(email)) {
+            throw new RuntimeException("EMAIL УЖЕ ЕСТЬ!!!");
+        }
+
+        // Я переместил параметр выше сюда
+        User user = new User(currentId.getAndIncrement(),
+                email, password,
+                Role.USER, new HashMap<>());
+
         users.put(user.getUserId(), user);
         return user;
     }
@@ -44,6 +60,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean delete(int userId) {
+        if (activeUser == null || activeUser.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Вы не администратор!");
+        }
         return users.remove(userId) != null;
     }
 
@@ -52,3 +71,4 @@ public class UserRepositoryImpl implements UserRepository {
         return users.values().stream().anyMatch(user -> user.getEmail().equals(email));
     }
 }
+
