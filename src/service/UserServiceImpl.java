@@ -11,7 +11,10 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
     private User activeUser;
-    private final List<User> users = List.of();
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public User registerUser(String email, String password) {
@@ -23,10 +26,9 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Email already exists");
         }
 
-        User registeredUser = new User(1, email, password, Role.USER, new HashMap<>());
+        User registeredUser = userRepository.createUser(email, password);
         System.out.println("Пользователь с email " + email + " и password " + password + " успешно зарегистрирован.");
         return registeredUser;
-
     }
 
     @Override
@@ -53,33 +55,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(int UserId) {
-        for (User user : users) {
-            if (user.getUserId() == UserId) {
-                return user;
-            }
+    public User getUserById(int userId) {
+        User user = userRepository.findById(userId);
+        if (user != null) {
+            return user;
         }
+
         throw new RuntimeException("ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН ПО ID!!!");
     }
 
     @Override
     public boolean isEmailExist(String email) {
-
-        for (User user : users) {
-            if (user.getEmail().equals(email)) {
-                throw new RuntimeException("EMAIL УЖЕ ЕСТЬ!!!");
-            }
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return false;
         }
-        throw new RuntimeException("ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН!!!");
+
+        return true;
     }
 
     @Override
     public boolean isUserBlocked(String email) {
         User user = userRepository.findByEmail(email);
-        if (email != null || user.getRole() == Role.BLOCKED) {
-            throw new RuntimeException("ПОЛЬЗОВАТЕЛЬ ЗАБЛОКИРОВАН!!!");
+        if (user != null && user.getRole() == Role.BLOCKED) {
+            return true;
         }
-        throw new RuntimeException("ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН!!!");
+        return false;
     }
 
 

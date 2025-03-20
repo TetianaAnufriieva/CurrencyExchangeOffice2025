@@ -8,7 +8,7 @@ public interface UserService {
     // Вход пользователя
     User loginUser(String email, String password);
     // Получение пользователя по ID
-    User getUserById(int UserId);
+    User getUserById(int userId);
     // существует ли такой email
     boolean isEmailExist(String email);
     // пользователь заблокирован
