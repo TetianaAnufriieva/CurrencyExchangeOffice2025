@@ -1,18 +1,19 @@
 package repository;
 
 import model.Transaction;
+import model.TypeTransaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TransactionRepository {
 
     // Создание операции
-    void createTransaction(Transaction transaction);
-    // Получение всех операций
-    // для Admin
+    Transaction createTransaction(TypeTransaction type, int accountId, String currency, double amount, LocalDateTime date);
+    // Получение всех операций для Admin
     List<Transaction> findAll();
 
-    // for user global report
+    // Для глобального отчета пользователя
     List<Transaction> findByUserId(int userId);
 
     // Получение операций по счету

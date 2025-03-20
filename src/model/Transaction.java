@@ -13,7 +13,7 @@ public class Transaction {
 
     public Transaction(int transactionId, TypeTransaction type, int accountId, String currency, double amount, LocalDateTime date) {
         this.transactionId = transactionId;
-        this.type = TypeTransaction.DEPOSIT;
+        this.type = type;
         this.accountId = accountId;
         this.currency = currency;
         this.amount = amount;

@@ -16,7 +16,7 @@ public class CEOfficeApp {
 
         // Создание списка транзакций
         List<Transaction> transactions = new ArrayList<>();
-        TransactionRepository transactionRepository = new TransactionRepositoryImpl(transactions);
+        TransactionRepository transactionRepository = new TransactionRepositoryImpl(accountRepository);
 
         // Создание сервисного слоя
         UserService userService = new UserServiceImpl();
@@ -24,7 +24,7 @@ public class CEOfficeApp {
         AdminService adminService = new AdminServiceImpl();
         CurrencyService currencyService = new CurrencyServiceImpl();
         ExchangeService exchangeService = new ExchangeServiceImpl();
-        TransactionService transactionService = new TransactionServiceImpl();
+        TransactionService transactionService = new TransactionServiceImpl(transactionRepository, accountRepository, userService);
 
         // Создание меню
         Menu menu = new Menu(userService, currencyService, transactionService, accountService, adminService, exchangeService);

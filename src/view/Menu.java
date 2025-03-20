@@ -35,7 +35,6 @@ public class Menu {
         inputUser();
     }
 
-
     // Метод для входа пользователя в систему
     private int inputUser() {
         while (true) {
@@ -52,17 +51,16 @@ public class Menu {
                     System.exit(0);
                     break;
                 case 1:
-                        User authorizationUser = authorizationUser();
-                        if (authorizationUser != null) {
-                            showMenu(authorizationUser);
-                        }
-
+                    User authorizationUser = authorizationUser();
+                    if (authorizationUser != null) {
+                        showMenu(authorizationUser);
+                    }
                     break;
                 case 2:
-                        User registrationUser = registrationUser();
-                        if (registrationUser != null) {
-                            showMenu(registrationUser);
-                        }
+                    User registrationUser = registrationUser();
+                    if (registrationUser != null) {
+                        showMenu(registrationUser);
+                    }
                     break;
                 default:
                     System.out.println("Сделайте корректный выбор");
@@ -70,7 +68,6 @@ public class Menu {
             }
         }
     }
-
 
     private User authorizationUser() {
         try {
@@ -189,10 +186,10 @@ public class Menu {
                     closeAccount(user);
                     break;
                 case 6:
-                    showTransactionHistory(user);
+                    showUserTransactionHistory(user);
                     break;
                 case 7:
-                    showTransactionHistoryByCurrency(user);
+                    showUserTransactionHistoryByCurrency(user);
                     break;
                 case 8:
                     exchangeCurrency(user);
@@ -223,7 +220,7 @@ public class Menu {
                 throw new IllegalArgumentException("Сумма должна быть положительной.");
             }
 
-            transactionService.deposit(user, currency, amount);
+            transactionService.deposit(user.getUserId(), currency, amount);
             System.out.println("Счет успешно пополнен.");
         } catch (IllegalArgumentException e) {
             System.out.println("Ошибка: " + e.getMessage());
@@ -241,7 +238,7 @@ public class Menu {
                 throw new IllegalArgumentException("Сумма должна быть положительной.");
             }
 
-            if (transactionService.withdraw(user, currency, amount)) {
+            if (transactionService.withdraw(user.getUserId(), currency, amount)) {
                 System.out.println("Средства сняты.");
             } else {
                 System.out.println("Ошибка: недостаточно средств.");
@@ -271,7 +268,16 @@ public class Menu {
         }
     }
 
-    private void showTransactionHistory(User user) {
+    private void showAllTransactionHistory() {
+        try {
+            System.out.println("История всех операций пользователя:");
+            transactionService.getAllTransactions().forEach(System.out::println);
+        } catch (Exception e) {
+            System.out.println("Ошибка при получении истории операций: " + e.getMessage());
+        }
+    }
+
+    private void showUserTransactionHistory(User user) {
         try {
             System.out.println("История всех операций пользователя:");
             transactionService.getUserTransactions(user.getUserId()).forEach(System.out::println);
@@ -280,7 +286,7 @@ public class Menu {
         }
     }
 
-    private void showTransactionHistoryByCurrency(User user) {
+    private void showAllTransactionHistoryByCurrency() {
         try {
             System.out.print("Введите валюту для просмотра истории: ");
             String currency = scanner.nextLine().trim();
@@ -288,7 +294,21 @@ public class Menu {
                 System.out.println("Ошибка: валюта не может быть пустой.");
                 return;
             }
-            transactionService.getTransactionsByCurrency(currency).forEach(System.out::println);
+            transactionService.getAllTransactionsByCurrency(currency).forEach(System.out::println);
+        } catch (Exception e) {
+            System.out.println("Ошибка при получении истории операций по валюте: " + e.getMessage());
+        }
+    }
+
+    private void showUserTransactionHistoryByCurrency(User user) {
+        try {
+            System.out.print("Введите валюту для просмотра истории: ");
+            String currency = scanner.nextLine().trim();
+            if (currency.isEmpty()) {
+                System.out.println("Ошибка: валюта не может быть пустой.");
+                return;
+            }
+            transactionService.getUserTransactionsByCurrency(user.getUserId(), currency).forEach(System.out::println);
         } catch (Exception e) {
             System.out.println("Ошибка при получении истории операций по валюте: " + e.getMessage());
         }
@@ -340,10 +360,10 @@ public class Menu {
                 removeCurrency();
                 break;
             case 4:
-                showTransactionHistory(user);
+                showAllTransactionHistory();
                 break;
             case 5:
-                showTransactionHistoryByCurrency(user);
+                showAllTransactionHistoryByCurrency();
                 break;
             case 6:
                 promoteToAdmin();
