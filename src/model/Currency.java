@@ -1,8 +1,10 @@
 package model;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Currency {
+    public static Currency currency;
     private String code;  // Код валюты (USD, EUR, PLN)
     private double exchangeRate;  // Курс относительно базовой валюты (например, EUR).Можно использовать для двухэтапной конвертации
 // например, для USD -> PLN это будет

@@ -20,7 +20,10 @@ public interface UserRepository {
     // Создание нового пользователя
     User createUser(String email, String password);
     // Поиск пользователя по ID
+    static User findById(int userId);
+
     User findById(int userId);
+
     // Поиск пользователя по email
     User findByEmail(String email);
     // Удаление пользователя

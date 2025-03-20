@@ -6,5 +6,8 @@ public interface AccountService {
 
     void createAccount(int userId, String currency);
 
+    // Открытие нового счета
+    void createAccount(int userId, String currency, double balance);
+
     boolean close(int userId, String currency);
 }
