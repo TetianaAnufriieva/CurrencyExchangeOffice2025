@@ -18,7 +18,7 @@ class TransactionServiceImplTest {
 
     private static CurrencyRepository currencyRepository = new CurrencyRepositoryImpl();
     private static UserRepository userRepository = new UserRepositoryImpl();
-    private static UserService userService = new UserServiceImpl();
+    private static UserService userService = new UserServiceImpl(userRepository);
     private static AccountRepository accountRepository = new AccountRepositoryImpl(userRepository, currencyRepository);
     private static TransactionRepository transactionRepository = new TransactionRepositoryImpl(accountRepository);
     private static TransactionService transactionService = new TransactionServiceImpl(transactionRepository, accountRepository, userService);
