@@ -107,11 +107,21 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public boolean close(int accountId) {
+
+        Account account = findById(accountId);
+        if ( account.getBalance() > 0) {
+            throw new IllegalArgumentException("Account with ID " + accountId + " cannot be closed.");
+        }
       return true;
     }
 
     @Override
     public boolean exists(int accountId) {
+
+        Account account = findById(accountId);
+        if (account != null) {
+
+        }
         return true;
 
 
