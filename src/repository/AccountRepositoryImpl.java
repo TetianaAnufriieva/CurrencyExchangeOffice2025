@@ -24,7 +24,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public Account createAccount(int userId, String currencyCode, double balance) {
         // TODO: код, отвечающий за проверку, должен быть в сервисе
-        User user = UserRepository.findById(userId);
+        User user = userRepository.findById(userId);
         if (user == null) {
             throw new IllegalArgumentException("User с ID " + userId + " не существует.");
         }

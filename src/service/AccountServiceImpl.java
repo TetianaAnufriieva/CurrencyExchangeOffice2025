@@ -4,7 +4,7 @@ import model.Account;
 import repository.AccountRepository;
 import repository.TransactionRepository;
 
-import static repository.UserRepository.findById;
+
 
 public class AccountServiceImpl implements AccountService {
 
