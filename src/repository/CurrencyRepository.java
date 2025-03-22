@@ -10,7 +10,7 @@ public interface CurrencyRepository {
     // Добавить валюту
     void create(Currency currency);
     // Получить валюту по коду
-    Optional<Currency> findByCode(String code);
+     Optional<Currency> findByCode(String code);
     // Удалить валюту
     void delete(String code);
     // Получить все валюты

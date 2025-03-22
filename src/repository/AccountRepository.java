@@ -2,6 +2,10 @@ package repository;
 
 import model.Account;
 import java.util.List;
+import java.util.ArrayList;
+import  java.util.Currency;
+import java.util.Objects;
+
 
 public interface AccountRepository {
 
@@ -17,8 +21,5 @@ public interface AccountRepository {
     boolean close(int accountId);
     // Проверка наличия счета
     boolean exists(int accountId);
-
-
-
 
 }
