@@ -26,9 +26,11 @@ public class AccountServiceImpl implements AccountService {
 
 
 
-    public AccountServiceImpl(AccountRepository accountRepository, TransactionRepository transactionRepository, UserRepository userRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, TransactionRepository transactionRepository, UserRepository userRepository, CurrencyRepository currencyRepository) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
+        this.userRepository = userRepository;
+        this.currencyRepository = currencyRepository;
 
     }
 
@@ -53,13 +55,12 @@ public class AccountServiceImpl implements AccountService {
 
         }
 
-        Optional<Currency> currencyOpt = CurrencyRepository.findByCode(currency);
+        Optional<Currency> currencyOpt = currencyRepository.findByCode(currency);
         if (currencyOpt.isEmpty()) {
             throw new
-                    IllegalArgumentException("Валюта с кодом " + currency + " не найдена.");
+                    IllegalArgumentException("Валюта с кодом " + currency + " не найдена в репозитории");
 
         }
-
 
         List<Account> accounts = userAccounts.computeIfAbsent(userId, k -> new ArrayList<>());
         if (accounts.stream().anyMatch(acc -> acc.getCurrency().getCode().equals(currency))) {
