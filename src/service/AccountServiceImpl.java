@@ -31,4 +31,9 @@ public class AccountServiceImpl implements AccountService {
     public boolean close(int userId, String currency) {
         return false;
     }
+
+    @Override
+    public boolean hasOpenAccountsInCurrency(String code) {
+        return false;
+    }
 }

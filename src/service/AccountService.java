@@ -7,4 +7,7 @@ public interface AccountService {
     void createAccount(int userId, String currency);
 
     boolean close(int userId, String currency);
+
+    boolean hasOpenAccountsInCurrency(String code);
+
 }

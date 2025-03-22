@@ -8,7 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CurrencyServiceImpl implements CurrencyService {
+    private final Map<String, Currency> currencies = new HashMap<>();
+    private final AccountService accountService; // сервис для работы со счетами пользователей
 
+    public CurrencyServiceImpl(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
 //    @Override
 //    public void addCurrency(String code, double exchangeRate) {
