@@ -31,4 +31,5 @@ public class CurrencyServiceImpl implements CurrencyService {
     public Map<String, Currency> getAllCurrencies() {
         return Map.of();
     }
+
 }
