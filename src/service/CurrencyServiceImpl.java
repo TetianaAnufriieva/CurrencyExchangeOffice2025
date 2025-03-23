@@ -3,18 +3,75 @@ package service;
 import model.Currency;
 import model.Role;
 import model.User;
+import repository.AccountRepository;
+import repository.CurrencyRepository;
+import repository.TransactionRepository;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 public class CurrencyServiceImpl implements CurrencyService {
-    private final Map<String, Currency> currencies = new HashMap<>();
-    private final AccountService accountService; // сервис для работы со счетами пользователей
+  private final CurrencyRepository currencyRepository;
+  private final AccountRepository accountRepository;
+  private final TransactionRepository transactionRepository;
+  private final User currentUser;
+  private static final String BASE_CURRENCY = "EUR";
 
-    public CurrencyServiceImpl(AccountService accountService) {
-        this.accountService = accountService;
+  public CurrencyServiceImpl(CurrencyRepository currencyRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, User currentUser) {
+    this.currencyRepository = currencyRepository;
+    this.accountRepository = accountRepository;
+    this.transactionRepository = transactionRepository;
+    this.currentUser = currentUser;
+  }
+
+  @Override
+  public void addCurrency(String code, double exchangeRate) {
+    if (currentUser.getRole() != Role.ADMIN) {
+      throw new SecurityException("Только администратор может добавлять валюты.");
     }
+    if (currencyRepository.findByCode(code).isPresent()) {
+      throw new IllegalArgumentException("Валюта с кодом " + code + " уже существует.");
+    }
+    currencyRepository.save(new Currency(code, exchangeRate));
+  }
 
+  @Override
+  public void updateCurrency(String code, double exchangeRate) {
+    if (currentUser.getRole() != Role.ADMIN) {
+      throw new SecurityException("Только администратор может обновлять валюты.");
+    }
+    Optional<Currency> currencyOpt = currencyRepository.findByCode(code);
+    if (currencyOpt.isEmpty()) {
+      throw new IllegalArgumentException("Валюта с кодом " + code + " не найдена.");
+    }
+    currencyOpt.get().setExchangeRate(exchangeRate);
+  }
+
+  @Override
+  public void removeCurrency(String code) {
+    if (currentUser.getRole() != Role.ADMIN) {
+      throw new SecurityException("Только администратор может удалять валюты.");
+    }
+    boolean hasAccounts = accountRepository.findAll().stream(getAllCurrencies())
+            .anyMatch(account -> account.getCurrencys().getCode().equals(code));
+    if (hasAccounts) {
+      System.out.println("Невозможно удалить валюту, так как существуют аккаунты с этой валютой.");
+      return;
+    }
+    currencyRepository.delete(code);
+  }
+
+
+
+  @Override
+  public Map<String, Currency> getAllCurrencies() {
+    if (currentUser.getRole() == Role.BLOCKED) {
+      throw new SecurityException("У вас нет доступа к просмотру валют.");
+    }
+    return Collections.unmodifiableMap(currencyRepository.findAll());
+  }
+}
 //    @Override
 //    public void addCurrency(String code, double exchangeRate) {
 //
@@ -37,52 +94,27 @@ public class CurrencyServiceImpl implements CurrencyService {
 //        return Map.of();
 //    }
 
-    @Override
-    public void addCurrency(String code, double exchangeRate) {
-        if (currencies.containsKey(code)) {
-            throw new IllegalArgumentException("Валюты с таким кодом уже существует: " + code);
-        }
-        currencies.put(code, new Currency(code, exchangeRate));
-
-    }
-
-    @Override
-    public void updateCurrency(String code, double exchangeRate) {
-        Currency currency = currencies.get(code);
-        if (currency == null) {
-            throw new IllegalArgumentException("Валюты не существует: " + code);
-        }
-        currency.setExchangeRate(exchangeRate);
-
-    }
-
-    // При удалении должна быть проверка, есть ли открытые счета
-    // у пользователей в этой валюте? Если есть - что делать?
-    @Override
-    public void removeCurrency(String code) {
-        // Проверяем, есть ли открытые счета у пользователей в данной валюте
-        if (accountService.hasOpenAccountsInCurrency(code)) {
-            throw new IllegalStateException("Невозможно удалить валюту: Открытые счета существуют в валюте " + code);
-        }
-        currencies.remove(code);
-
-    }
-
-    @Override
-    public Map<String, Currency> getAllCurrencies() {
-        return new HashMap<>(currencies);
-    }
-
-//    // Метод для добавления открытого счета
-//    public void addOpenAccount(String currencyCode) {
-//        openAccountsByCurrency.put(currencyCode, openAccountsByCurrency.getOrDefault(currencyCode, 0) + 1);
+//    @Override
+//    public void addCurrency(String code, double exchangeRate) {
+//
 //    }
 //
-//    // Метод для закрытия счета
-//    public void closeAccount(String currencyCode) {
-//        Integer openAccounts = openAccountsByCurrency.get(currencyCode);
-//        if (openAccounts != null && openAccounts > 0) {
-//            openAccountsByCurrency.put(currencyCode, openAccounts - 1);
-//        }
-
-}
+//    @Override
+//    public void updateCurrency(String code, double exchangeRate) {
+//
+//    }
+//
+//    // При удалении должна быть проверка, есть ли открытые счета
+//    // у пользователей в этой валюте? Если есть - что делать?
+//    @Override
+//    public void removeCurrency(String code) {
+//
+//    }
+//
+//    @Override
+//    public Map<String, Currency> getAllCurrencies() {
+//        return new HashMap<>(currencies);
+//    }
+//
+//
+//}

@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface CurrencyRepository {
 
+    void create(String code, double exchangeRate);
+
     // Добавить валюту
     void create(Currency currency);
     // Получить валюту по коду
@@ -16,5 +18,7 @@ public interface CurrencyRepository {
     // Получить все валюты
     Map<String, Currency> findAll();
 
+  // Сохранить валюту
+    void save(Currency currency);
 
 }

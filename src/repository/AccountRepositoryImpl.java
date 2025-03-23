@@ -114,4 +114,9 @@ public class AccountRepositoryImpl implements AccountRepository {
     public boolean exists(int accountId) {
         return findById(accountId) != null;
     }
+
+    @Override
+    public Arrays findAll() {
+        return null;
+    }
 }

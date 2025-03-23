@@ -1,6 +1,8 @@
 package repository;
 
 import model.Account;
+
+import java.util.Arrays;
 import java.util.List;
 
 public interface AccountRepository {
@@ -19,6 +21,5 @@ public interface AccountRepository {
     boolean exists(int accountId);
 
 
-
-
+    Arrays findAll();
 }
