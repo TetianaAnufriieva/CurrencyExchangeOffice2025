@@ -18,6 +18,10 @@ public class Menu {
     private final AdminService adminService;
     private final ExchangeService exchangeService;
     private final Scanner scanner = new Scanner(System.in);
+    public static final String COLOR_GREEN = "\u001B[32m";
+    public static final String COLOR_YELLOW = "\u001B[33m";
+    public static final String COLOR_BLUE = "\u001B[34m";
+    public static final String COLOR_RESET = "\u001B[0m";
 
     public Menu(UserService userService, CurrencyService currencyService, TransactionService transactionService,
                 AccountService accountService, AdminService adminService, ExchangeService exchangeService) {
@@ -31,7 +35,7 @@ public class Menu {
 
     // Главный стартовый метод для начала работы
     public void start() {
-        System.out.println("Добро пожаловать в систему 'Обменный пункт валюты'!");
+        System.out.println(COLOR_YELLOW + "Добро пожаловать в систему 'Обменный пункт валюты'!" + COLOR_GREEN);
         inputUser();
     }
 
@@ -42,7 +46,7 @@ public class Menu {
             System.out.println("1. Авторизация");
             System.out.println("2. Регистрация нового пользователя");
             System.out.println("0. Выход из системы");
-            System.out.print("\nСделайте выбор пункта меню:");
+            System.out.print(COLOR_RESET + "\nСделайте выбор пункта меню:");
 
             int input = getIntInput();
             switch (input) {
@@ -91,7 +95,7 @@ public class Menu {
         } catch (EmailValidateException | PasswordValidateException e) {
             System.out.println("Ошибка: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Произошла ошибка при авторизации. Попробуйте снова.");
+            System.out.println("Произошла ошибка при авторизации. Попробуйте снова. Ошибка: " + e.getMessage());
         }
         return null;
     }
@@ -125,9 +129,9 @@ public class Menu {
     // Главное меню
     private void showMenu(User user) {
         while (true) {
-            System.out.println("\n1. Меню пользователя");
+            System.out.println(COLOR_GREEN + "\n1. Меню пользователя");
             System.out.println("2. Меню администратора");
-            System.out.println("0. Выход");
+            System.out.println("0. Выход" + COLOR_RESET);
             System.out.print("\nВыберите действие: ");
             int choice = getIntInput();
 

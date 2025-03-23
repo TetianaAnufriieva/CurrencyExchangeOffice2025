@@ -71,3 +71,4 @@ public class UserRepositoryImpl implements UserRepository {
         return users.values().stream().anyMatch(user -> user.getEmail().equals(email));
     }
 }
+
