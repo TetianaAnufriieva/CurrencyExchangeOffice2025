@@ -33,10 +33,6 @@ public class CurrencyRepositoryImpl implements CurrencyRepository {
 
     }
 
-    @Override
-    public void create(Currency currency) {
-
-    }
 
     @Override
     public Optional<Currency> findByCode(String code) {

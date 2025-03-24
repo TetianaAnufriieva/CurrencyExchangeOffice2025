@@ -6,6 +6,7 @@ import model.User;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class AccountRepositoryImpl implements AccountRepository {
 
@@ -116,7 +117,10 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public Arrays findAll() {
-        return null;
+    public List<Account> findAll() {
+        return new ArrayList<>(userAccounts.values().stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList()));
     }
+
 }
