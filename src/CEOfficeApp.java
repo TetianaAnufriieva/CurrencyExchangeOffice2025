@@ -22,7 +22,7 @@ public class CEOfficeApp {
         UserService userService = new UserServiceImpl(userRepository);
         AccountService accountService = new AccountServiceImpl(accountRepository, transactionRepository);
         AdminService adminService = new AdminServiceImpl(userRepository);
-        CurrencyService currencyService = new CurrencyServiceImpl(currencyRepository, accountRepository, transactionRepository);
+        CurrencyService currencyService = new CurrencyServiceImpl(currencyRepository, accountRepository);
         ExchangeService exchangeService = new ExchangeServiceImpl(accountRepository, transactionRepository);
         TransactionService transactionService = new TransactionServiceImpl(transactionRepository, accountRepository, userService);
 
