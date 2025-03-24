@@ -8,7 +8,6 @@ import repository.CurrencyRepository;
 import repository.TransactionRepository;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 
 public class CurrencyServiceImpl implements CurrencyService {
@@ -54,8 +53,7 @@ public class CurrencyServiceImpl implements CurrencyService {
       throw new SecurityException("Только администратор может удалять валюты.");
     }
     boolean hasAccounts = accountRepository.findAll().stream(getAllCurrencies())
-            .anyMatch(account -> account.getCurrencys().getCode().equals(code));
-    if (hasAccounts) {
+        .anyMatch(account -> account.getCurrency().getCode().equals(code));    if (hasAccounts) {
       System.out.println("Невозможно удалить валюту, так как существуют аккаунты с этой валютой.");
       return;
     }
@@ -65,7 +63,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 
   @Override
-  public Map<String, Currency> getAllCurrencies() {
+  public int[] getAllCurrencies() {
     if (currentUser.getRole() == Role.BLOCKED) {
       throw new SecurityException("У вас нет доступа к просмотру валют.");
     }

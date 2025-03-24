@@ -7,10 +7,12 @@ import java.util.Optional;
 
 public interface CurrencyRepository {
 
-    void create(String code, double exchangeRate);
 
     // Добавить валюту
+    void create(String code, double exchangeRate);
+
     void create(Currency currency);
+
     // Получить валюту по коду
     Optional<Currency> findByCode(String code);
     // Удалить валюту
