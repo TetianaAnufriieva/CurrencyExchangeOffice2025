@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TransactionServiceImplTest {
+class TransactionServiceImplTest {
 
     private static CurrencyRepository currencyRepository = new CurrencyRepositoryImpl();
     private static UserRepository userRepository = new UserRepositoryImpl();
