@@ -1,7 +1,6 @@
 package repository;
 
 import model.Currency;
-import model.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,23 +19,43 @@ public class CurrencyRepositoryImpl implements CurrencyRepository {
         currencies.put ("PLN", new Currency("PLN", 0.23));
     }
 
+
+
     @Override
-    public void create (Currency currency) {
+    public void create (String code, double exchangeRate) {
+        if (code == null || code.isEmpty()) {
+            throw new IllegalArgumentException("Код валюты не может быть пустым");
+        }
+        if (exchangeRate <= 0) {
+            throw new IllegalArgumentException("Курс валюты должен быть положительным");
+        }
+        currencies.put(code, new Currency(code, exchangeRate));
 
     }
+
 
     @Override
     public Optional<Currency> findByCode(String code) {
-        return Optional.empty();
+        return Optional.ofNullable(currencies.get(code));
     }
+
+
 
     @Override
     public void delete(String code) {
+        if (!currencies.containsKey(code)) {
+            throw new IllegalArgumentException("Валюта с кодом " + code + " не найдена");
+        }
+        currencies.remove(code);
 
     }
 
     @Override
     public Map<String, Currency> findAll() {
-        return Map.of();
+        return new HashMap<>(currencies);
     }
+
+
+
+
 }
