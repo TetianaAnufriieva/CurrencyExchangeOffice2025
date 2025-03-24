@@ -4,31 +4,44 @@ import model.Account;
 import model.Currency;
 import model.TypeTransaction;
 import repository.AccountRepository;
+import repository.CurrencyRepository;
 import repository.TransactionRepository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class ExchangeServiceImpl implements ExchangeService {
 
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
+    private final CurrencyRepository currencyRepository;
 
-    public ExchangeServiceImpl(AccountRepository accountRepository, TransactionRepository transactionRepository) {
+    public ExchangeServiceImpl(AccountRepository accountRepository, TransactionRepository transactionRepository, CurrencyRepository currencyRepository) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
+        this.currencyRepository = currencyRepository;
     }
 
     @Override
-    public void exchange(int userId, Currency fromCurrency, Currency toCurrency, double amount) {
+    public void exchange(int userId, String fromCurrencyCode, String toCurrencyCode, double amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Сумма для обмена должна быть больше 0.");
         }
 
-        double exchangeRate = toCurrency.getExchangeRate() / fromCurrency.getExchangeRate();
-        double exchangedAmount = amount * exchangeRate;
+        Optional<Currency> fromCurrency = currencyRepository.findByCode(fromCurrencyCode);
+        if (fromCurrency.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Валюта с кодом " + fromCurrencyCode + " не найдена в репозитории");
+        }
 
-        String fromCurrencyCode = fromCurrency.getCode();
-        String toCurrencyCode = toCurrency.getCode();
+        Optional<Currency> toCurrency = currencyRepository.findByCode(toCurrencyCode);
+        if (toCurrency.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Валюта с кодом " + toCurrencyCode + " не найдена в репозитории");
+        }
+
+        double exchangeRate = toCurrency.get().getExchangeRate() / fromCurrency.get().getExchangeRate();
+        double exchangedAmount = amount * exchangeRate;
 
         Account fromAccount = accountRepository.findByUser(userId).stream()
                 .filter(account -> account.getCurrency().getCode().equals(fromCurrencyCode))

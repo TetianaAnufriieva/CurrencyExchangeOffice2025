@@ -262,9 +262,7 @@ public class Menu {
             System.out.print("Введите сумму для обмена: ");
             double amount = getDoubleInput();
 
-            Currency sourceCurrency = new Currency(fromCurrency, 2); // TODO: replace with - currencyRepo.findByCode
-            Currency targetCurrency = new Currency(toCurrency, 3); // TODO: replace with - currencyRepo.findByCode
-            exchangeService.exchange(user.getUserId(), sourceCurrency, targetCurrency, amount);
+            exchangeService.exchange(user.getUserId(), fromCurrency, toCurrency, amount);
             System.out.println("Обмен выполнен успешно.");
         } catch (IllegalArgumentException e) {
             System.out.println("Ошибка: " + e.getMessage());
@@ -339,7 +337,6 @@ public class Menu {
             System.out.println("5. Просмотр операций по валюте");
             System.out.println("6. Назначить администратора");
 //            System.out.println("7. Блокировать пользователя (опционально)");
-//            System.out.println("8. Блокировать транзакцию пользователя (опционально)");
             System.out.println("0. Выход");
             System.out.print("\nВыберите действие: ");
             int choice = getIntInput();
@@ -354,7 +351,7 @@ public class Menu {
     private void showAdminMenuCase(int choice, User user) {
         switch (choice) {
             case 1:
-                updateExchangeRate();
+                updateExchangeRate(user);
                 break;
             case 2:
                 addCurrency(user);
@@ -375,21 +372,15 @@ public class Menu {
                 // Todo опционально
 //                blockUser();
                 break;
-            case 8:
-                // Todo опционально
-//                blockUserTransaction();
-                break;
             default:
                 System.out.println("Неверный выбор.");
         }
     }
 
-    private void updateExchangeRate() {
+    private void updateExchangeRate(User user) {
         try {
             System.out.print("Введите валюту: ");
             String currency = scanner.nextLine();
-//            System.out.print("Введите валюту в: ");
-//            String toCurrency = scanner.nextLine();
             System.out.print("Введите новый курс: ");
             double newRate = getDoubleInput();
 
@@ -397,7 +388,7 @@ public class Menu {
                 throw new IllegalArgumentException("Курс должен быть положительным числом.");
             }
 
-//            exchangeService.updateExchangeRate(fromCurrency, toCurrency, newRate);
+            currencyService.updateCurrency(user, currency, newRate);
             System.out.println("Курс успешно обновлен.");
         } catch (IllegalArgumentException e) {
             System.out.println("Ошибка: " + e.getMessage());

@@ -5,5 +5,5 @@ import model.Currency;
 public interface ExchangeService {
 
     // Обмен валют
-    void exchange(int userId, Currency fromCurrency, Currency toCurrency, double amount);
+    void exchange(int userId, String fromCurrency, String toCurrency, double amount);
 }
