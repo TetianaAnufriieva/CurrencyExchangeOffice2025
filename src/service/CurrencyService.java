@@ -13,4 +13,5 @@ public interface CurrencyService {
     void removeCurrency(String code);
     // Получить список всех валют
     Map<String, Currency> getAllCurrencies();
+
 }

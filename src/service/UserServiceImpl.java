@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
         User registeredUser = userRepository.createUser(email, password);
         System.out.println("Пользователь с email " + email + " и password " + password + " успешно зарегистрирован.");
         return registeredUser;
+
     }
 
     @Override
@@ -55,21 +56,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(int userId) {
+    public User getUserById (int userId){
         User user = userRepository.findById(userId);
         if (user != null) {
             return user;
         }
-
         throw new RuntimeException("ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН ПО ID!!!");
-    }
-
-    @Override
-    public boolean isEmailExist(String email) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            return false;
         }
+
+        @Override
+        public boolean isEmailExist (String email){
+
+            User user = userRepository.findByEmail(email);
+            if (user == null) {
+                return false;
+            }
 
         return true;
     }
@@ -82,6 +83,4 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
-
-
 }

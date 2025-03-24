@@ -21,8 +21,8 @@ public class CEOfficeApp {
         // Создание сервисного слоя
         UserService userService = new UserServiceImpl(userRepository);
         AccountService accountService = new AccountServiceImpl(accountRepository, transactionRepository);
-        AdminService adminService = new AdminServiceImpl();
-        CurrencyService currencyService = new CurrencyServiceImpl();
+        AdminService adminService = new AdminServiceImpl(userRepository);
+        CurrencyService currencyService = new CurrencyServiceImpl(currencyRepository, accountRepository, transactionRepository);
         ExchangeService exchangeService = new ExchangeServiceImpl(accountRepository, transactionRepository);
         TransactionService transactionService = new TransactionServiceImpl(transactionRepository, accountRepository, userService);
 
