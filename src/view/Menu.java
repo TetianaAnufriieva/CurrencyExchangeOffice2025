@@ -1,5 +1,6 @@
 package view;
 
+import model.Currency;
 import model.User;
 import model.Role;
 import service.*;
@@ -261,11 +262,9 @@ public class Menu {
             System.out.print("Введите сумму для обмена: ");
             double amount = getDoubleInput();
 
-            if (amount <= 0) {
-                throw new IllegalArgumentException("Сумма должна быть положительной.");
-            }
-
-            exchangeService.exchange(user.getUserId(), fromCurrency, toCurrency, amount);
+            Currency sourceCurrency = new Currency(fromCurrency, 2); // TODO: replace with - currencyRepo.findByCode
+            Currency targetCurrency = new Currency(toCurrency, 3); // TODO: replace with - currencyRepo.findByCode
+            exchangeService.exchange(user.getUserId(), sourceCurrency, targetCurrency, amount);
             System.out.println("Обмен выполнен успешно.");
         } catch (IllegalArgumentException e) {
             System.out.println("Ошибка: " + e.getMessage());
