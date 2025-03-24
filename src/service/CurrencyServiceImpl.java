@@ -1,14 +1,11 @@
 package service;
 
-
 import model.Account;
 import model.Currency;
 import model.Role;
 import model.User;
 import repository.AccountRepository;
 import repository.CurrencyRepository;
-import repository.CurrencyRepositoryImpl;
-import repository.TransactionRepository;
 
 import java.util.Collections;
 import java.util.Map;
@@ -17,17 +14,11 @@ import java.util.Optional;
 public class CurrencyServiceImpl implements CurrencyService {
   private final CurrencyRepository currencyRepository;
   private final AccountRepository accountRepository;
-  private final TransactionRepository transactionRepository;
   private  User currentUser;
-  private static final String BASE_CURRENCY = "EUR";
 
-
-  public CurrencyServiceImpl(CurrencyRepository currencyRepository,
-  AccountRepository accountRepository, TransactionRepository transactionRepository) {
+  public CurrencyServiceImpl(CurrencyRepository currencyRepository, AccountRepository accountRepository) {
     this.currencyRepository = currencyRepository;
     this.accountRepository = accountRepository;
-    this.transactionRepository = transactionRepository;
-
   }
 
   @Override
