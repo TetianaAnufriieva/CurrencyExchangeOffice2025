@@ -14,7 +14,6 @@ import java.util.Optional;
 public class CurrencyServiceImpl implements CurrencyService {
   private final CurrencyRepository currencyRepository;
   private final AccountRepository accountRepository;
-  private  User currentUser;
 
   public CurrencyServiceImpl(CurrencyRepository currencyRepository, AccountRepository accountRepository) {
     this.currencyRepository = currencyRepository;
@@ -22,7 +21,7 @@ public class CurrencyServiceImpl implements CurrencyService {
   }
 
   @Override
-  public void addCurrency(String code, double exchangeRate) {
+  public void addCurrency(User currentUser, String code, double exchangeRate) {
     if (currentUser.getRole() != Role.ADMIN) {
       throw new SecurityException("Только администратор может добавлять валюты.");
     }
@@ -33,7 +32,7 @@ public class CurrencyServiceImpl implements CurrencyService {
   }
 
   @Override
-  public void updateCurrency(String code, double exchangeRate) {
+  public void updateCurrency(User currentUser, String code, double exchangeRate) {
     if (currentUser.getRole() != Role.ADMIN) {
       throw new SecurityException("Только администратор может обновлять валюты.");
     }
@@ -45,7 +44,7 @@ public class CurrencyServiceImpl implements CurrencyService {
   }
 
   @Override
-  public void removeCurrency(String code) {
+  public void removeCurrency(User currentUser, String code) {
     if (currentUser.getRole() != Role.ADMIN) {
       throw new SecurityException("Только администратор может удалять валюты.");
     }
@@ -59,10 +58,8 @@ public class CurrencyServiceImpl implements CurrencyService {
     currencyRepository.delete(code);
   }
 
-
-
   @Override
-  public Map<String, Currency> getAllCurrencies() {
+  public Map<String, Currency> getAllCurrencies(User currentUser) {
     if (currentUser.getRole() == Role.BLOCKED) {
       throw new SecurityException("У вас нет доступа к просмотру валют.");
     }

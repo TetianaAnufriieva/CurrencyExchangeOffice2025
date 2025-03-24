@@ -358,10 +358,10 @@ public class Menu {
                 updateExchangeRate();
                 break;
             case 2:
-                addCurrency();
+                addCurrency(user);
                 break;
             case 3:
-                removeCurrency();
+                removeCurrency(user);
                 break;
             case 4:
                 showAllTransactionHistory();
@@ -405,7 +405,7 @@ public class Menu {
         }
     }
 
-    private void addCurrency() {
+    private void addCurrency(User user) {
         try {
             System.out.print("Введите код валюты для добавления: ");
             String code = scanner.nextLine();
@@ -416,14 +416,14 @@ public class Menu {
                 throw new IllegalArgumentException("Курс должен быть положительным числом.");
             }
 
-            currencyService.addCurrency(code, rate);
+            currencyService.addCurrency(user, code, rate);
             System.out.println("Валюта успешно добавлена.");
         } catch (IllegalArgumentException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }
 
-    private void removeCurrency() {
+    private void removeCurrency(User user) {
         try {
             System.out.print("Введите код валюты для удаления: ");
             String code = scanner.nextLine();
@@ -432,7 +432,7 @@ public class Menu {
                 throw new IllegalArgumentException("Код валюты не может быть пустым.");
             }
 
-            currencyService.removeCurrency(code);
+            currencyService.removeCurrency(user, code);
             System.out.println("Валюта успешно удалена.");
         } catch (IllegalArgumentException e) {
             System.out.println("Ошибка: " + e.getMessage());
