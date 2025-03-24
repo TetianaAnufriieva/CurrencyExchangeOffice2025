@@ -53,62 +53,42 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public Account findById(int accountId) {
-        return userAccounts.values().stream()
-                .flatMap(List::stream)
-                .filter(account -> account.getAccountId() == accountId)
-                .findFirst()
-                .orElse(null);
+        for (List<Account> accounts : userAccounts.values()) {
+            for (Account account : accounts) {
+                if (account.getAccountId() == accountId) {
+                return account;
+                }
+            }
+        }   return null;
     }
 
     @Override
     public List<Account> findByUser(int userId) {
-        return userAccounts.getOrDefault(userId, new ArrayList<>());
+        return userAccounts.getOrDefault(userId, Collections.emptyList());
     }
-
-
 
     @Override
     public boolean delete(int accountId) {
-        for (Map.Entry<Integer, List<Account>> entry : userAccounts.entrySet()) {
-            List<Account> accounts = entry.getValue();
+        Account accountToRemove = findById(accountId);
 
-            // Найдём аккаунт, который удаляем
-            Account accountToRemove = accounts.stream()
-                    .filter(account -> account.getAccountId() == accountId)
-                    .findFirst()
-                    .orElse(null);
-
-            if (accountToRemove == null) {
-                continue; // Если аккаунт не найден, переходим к следующему пользователю
-            }
-
-            // Получаем код валюты (если есть)
-            String currencyCode = accountToRemove.getCurrency() != null
-                    ? accountToRemove.getCurrency().getCode()
-                    : null;
-
-            // Удаляем аккаунт
-            accounts.remove(accountToRemove);
-
-            // Проверяем, есть ли ещё аккаунты с этой валютой (если валюта была установлена)
-            if (currencyCode != null) {
-                boolean currencyStillUsed = userAccounts.values().stream()
-                        .flatMap(List::stream)
-                        .anyMatch(acc -> acc.getCurrency() != null && acc.getCurrency().getCode().equals(currencyCode));
-
-                // Если валюту больше никто не использует, удаляем её из репозитория
-                if (!currencyStillUsed) {
-                    currencyRepository.delete(currencyCode);
-                }
-            }
-
+        if (accountToRemove == null) {
+            return false;
         }
+
+        // Удаляем аккаунт
+        List<Account> userAccounts = this.userAccounts.get(accountToRemove.getUserId());
+        userAccounts.removeIf(account -> account.getAccountId() == accountToRemove.getAccountId());
+
         return true;
     }
 
     @Override
     public boolean close(int accountId) {
-      return false;
+        Account account = findById(accountId);
+        if (account != null && account.getBalance() == 0) {
+            return delete(accountId);
+        }
+        return false;
     }
 
     @Override

@@ -145,6 +145,10 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Пополнение счета
         account.setBalance(account.getBalance() + amount);
+
+        transactionRepository.createTransaction(TypeTransaction.DEPOSIT, account.getAccountId(),
+                currencyCode, amount, LocalDateTime.now());
+
         System.out.println("Счет пополнен на сумму: " + amount + " " + currencyCode);
     }
 
@@ -197,6 +201,10 @@ public class TransactionServiceImpl implements TransactionService {
 
         // Снимаем средства с счёта
         account.setBalance(account.getBalance() - amount);
+
+        transactionRepository.createTransaction(TypeTransaction.WITHDRAW, account.getAccountId(),
+                currency, amount, LocalDateTime.now());
+
         System.out.println("Средства успешно сняты: " + amount + " " + currency);
 
         return true; // Операция выполнена успешно
