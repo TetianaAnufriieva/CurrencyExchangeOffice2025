@@ -55,10 +55,7 @@ public class CurrencyRepositoryImpl implements CurrencyRepository {
         return new HashMap<>(currencies);
     }
 
-    @Override
-    public void save(Currency currency) {
 
-    }
 
 
 }

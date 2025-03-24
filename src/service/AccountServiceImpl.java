@@ -32,8 +32,5 @@ public class AccountServiceImpl implements AccountService {
         return false;
     }
 
-//    @Override
-//    public boolean hasOpenAccountsInCurrency(String code) {
-//        return false;
-//    }
+
 }

@@ -18,7 +18,5 @@ public interface CurrencyRepository {
     // Получить все валюты
     Map<String, Currency> findAll();
 
-  // Сохранить валюту
-    void save(Currency currency);
 
 }

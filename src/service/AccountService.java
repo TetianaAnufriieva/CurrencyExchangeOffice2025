@@ -8,6 +8,6 @@ public interface AccountService {
 
     boolean close(int userId, String currency);
 
-//    boolean hasOpenAccountsInCurrency(String code);
+
 
 }
