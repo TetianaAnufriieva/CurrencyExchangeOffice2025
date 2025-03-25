@@ -13,6 +13,6 @@ public interface CurrencyService {
     // Удаление валюты
     void removeCurrency(User currentUser, String code);
     // Получить список всех валют
-    Map<String, Currency> getAllCurrencies(User currentUser);
+    Map<String, Currency> getAllCurrencies();
 
 }

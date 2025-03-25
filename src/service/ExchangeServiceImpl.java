@@ -40,7 +40,7 @@ public class ExchangeServiceImpl implements ExchangeService {
                     "Валюта с кодом " + toCurrencyCode + " не найдена в репозитории");
         }
 
-        double exchangeRate = toCurrency.get().getExchangeRate() / fromCurrency.get().getExchangeRate();
+        double exchangeRate = fromCurrency.get().getExchangeRate() / toCurrency.get().getExchangeRate();
         double exchangedAmount = amount * exchangeRate;
 
         Account fromAccount = accountRepository.findByUser(userId).stream()

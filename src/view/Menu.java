@@ -1,8 +1,7 @@
 package view;
 
-import model.Currency;
-import model.User;
 import model.Role;
+import model.User;
 import service.*;
 import utils.EmailValidateException;
 import utils.PasswordValidateException;
@@ -67,6 +66,19 @@ public class Menu {
                         showMenu(registrationUser);
                     }
                     break;
+                // TODO: 100, 200, 300 только для отладки
+                case 100:
+                    User normalUser = userService.getUserById(1);
+                    showMenu(normalUser);
+                    break;
+                case 200:
+                    User adminUser = userService.getUserById(2);
+                    showMenu(adminUser);
+                    break;
+                case 300:
+                    User blockedUser = userService.getUserById(3);
+                    showMenu(blockedUser);
+                    break;
                 default:
                     System.out.println("Сделайте корректный выбор");
                     break;
@@ -129,24 +141,12 @@ public class Menu {
 
     // Главное меню
     private void showMenu(User user) {
-        while (true) {
-            System.out.println(COLOR_GREEN + "\n1. Меню пользователя");
-            System.out.println("2. Меню администратора");
-            System.out.println("0. Выход" + COLOR_RESET);
-            System.out.print("\nВыберите действие: ");
-            int choice = getIntInput();
-
-            if (choice == 0) {
-                System.out.println("Выход...");
-                break;
-            }
-            if (user.getRole() == Role.ADMIN && choice == 2) {
-                showAdminMenu(user);
-            } else if (user.getRole() == Role.USER && choice == 1) {
-                showUserMenu(user);
-            } else {
-                System.out.println("Неверный выбор.");
-            }
+        if (user.getRole() == Role.ADMIN) {
+            showAdminMenu(user);
+        } else if (user.getRole() == Role.USER) {
+            showUserMenu(user);
+        } else {
+            System.out.println("Нет доступных опций меню.");
         }
     }
 
@@ -222,12 +222,12 @@ public class Menu {
             double amount = getDoubleInput();
 
             if (amount <= 0) {
-                throw new IllegalArgumentException("Сумма должна быть положительной.");
+                throw new IllegalArgumentException("Сумма должна быть положительной и не равной 0.");
             }
 
             transactionService.deposit(user.getUserId(), currency, amount);
-            System.out.println("Счет успешно пополнен.");
-        } catch (IllegalArgumentException e) {
+//            System.out.println("Счет успешно пополнен.");
+        } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }
@@ -244,11 +244,11 @@ public class Menu {
             }
 
             if (transactionService.withdraw(user.getUserId(), currency, amount)) {
-                System.out.println("Средства сняты.");
+//                System.out.println("Средства сняты.");
             } else {
                 System.out.println("Ошибка: недостаточно средств.");
             }
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }
@@ -263,8 +263,8 @@ public class Menu {
             double amount = getDoubleInput();
 
             exchangeService.exchange(user.getUserId(), fromCurrency, toCurrency, amount);
-            System.out.println("Обмен выполнен успешно.");
-        } catch (IllegalArgumentException e) {
+//            System.out.println("Обмен выполнен успешно.");
+        } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }
@@ -319,12 +319,15 @@ public class Menu {
         System.out.print("Введите валюту для открытия счета: ");
         String currency = scanner.nextLine();
         accountService.createAccount(user.getUserId(), currency);
+        System.out.println("Новый счет успешно открыт.");
     }
 
     private void closeAccount(User user) {
         System.out.print("Введите валюту для закрытия счета: ");
         String currency = scanner.nextLine();
         accountService.close(user.getUserId(), currency);
+        System.out.println("Счет успешно закрыт" +
+                ".");
     }
 
     // Меню администратора
@@ -336,7 +339,8 @@ public class Menu {
             System.out.println("4. Просмотр операций пользователя по всем счетам");
             System.out.println("5. Просмотр операций по валюте");
             System.out.println("6. Назначить администратора");
-//            System.out.println("7. Блокировать пользователя (опционально)");
+            System.out.println("7. Блокировать пользователя");
+            System.out.println("8. Просмотр всех валют");
             System.out.println("0. Выход");
             System.out.print("\nВыберите действие: ");
             int choice = getIntInput();
@@ -369,8 +373,10 @@ public class Menu {
                 promoteToAdmin();
                 break;
             case 7:
-                // Todo опционально
-//                blockUser();
+                blockUser();
+                break;
+            case 8:
+                allCurrencies();
                 break;
             default:
                 System.out.println("Неверный выбор.");
@@ -390,7 +396,7 @@ public class Menu {
 
             currencyService.updateCurrency(user, currency, newRate);
             System.out.println("Курс успешно обновлен.");
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }
@@ -408,7 +414,7 @@ public class Menu {
 
             currencyService.addCurrency(user, code, rate);
             System.out.println("Валюта успешно добавлена.");
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }
@@ -423,24 +429,44 @@ public class Menu {
             }
 
             currencyService.removeCurrency(user, code);
-            System.out.println("Валюта успешно удалена.");
-        } catch (IllegalArgumentException e) {
+//            System.out.println("Валюта успешно удалена.");
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+    }
+
+    private void allCurrencies(){
+        System.out.println(currencyService.getAllCurrencies());
+    }
+
+    private void blockUser() {
+        try {
+            System.out.print("Введите email пользователя, чтобы заблокировать: ");
+            String email = scanner.nextLine();
+
+            if (email.isBlank()) {
+                throw new IllegalArgumentException("Email пользователя не может быть пустым.");
+            }
+
+            adminService.blockUser(email);
+            System.out.println("Пользователь успешно заблокирован.");
+        } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }
 
     private void promoteToAdmin() {
         try {
-            System.out.print("Введите ID пользователя для повышения: ");
-            String userId = scanner.nextLine();
+            System.out.print("Введите email пользователя для повышения: ");
+            String email = scanner.nextLine();
 
-            if (userId.isBlank()) {
-                throw new IllegalArgumentException("ID пользователя не может быть пустым.");
+            if (email.isBlank()) {
+                throw new IllegalArgumentException("Email пользователя не может быть пустым.");
             }
 
-            adminService.promoteToAdmin(userId);
+            adminService.promoteToAdmin(email);
             System.out.println("Пользователь успешно повышен до администратора.");
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }

@@ -15,8 +15,8 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public void promoteToAdmin(String userId) {
-        User user = userRepository.findByEmail(userId);
+    public void promoteToAdmin(String email) {
+        User user = userRepository.findByEmail(email);
         if(user == null) {
             throw new RuntimeException("Пользователь с таким email не найден.");
         }
@@ -29,21 +29,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void blockUser(int userId) {
-
-
-        User user = userRepository.findById(userId);
-        if (user == null) {
-            throw new
-                    RuntimeException("Пользователь с таким id не найден.");
+    public void blockUser(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user == null) {
+            throw new RuntimeException("Пользователь с таким email не найден.");
         }
-        if(user.getRole() == Role.BLOCKED) {
-            throw new
-                    RuntimeException("Пользователь уже заблокирован.");
+        if (user.getRole() == Role.BLOCKED) {
+            throw new RuntimeException("Пользователь уже является заблокированным.");
         }
         user.setRole(Role.BLOCKED);
-
-
     }
 
 }

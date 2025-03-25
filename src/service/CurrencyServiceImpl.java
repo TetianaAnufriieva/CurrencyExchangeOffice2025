@@ -59,10 +59,7 @@ public class CurrencyServiceImpl implements CurrencyService {
   }
 
   @Override
-  public Map<String, Currency> getAllCurrencies(User currentUser) {
-    if (currentUser.getRole() == Role.BLOCKED) {
-      throw new SecurityException("У вас нет доступа к просмотру валют.");
-    }
+  public Map<String, Currency> getAllCurrencies() {
     return Collections.unmodifiableMap(currencyRepository.findAll());
   }
 }
