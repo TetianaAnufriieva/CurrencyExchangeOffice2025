@@ -1,5 +1,7 @@
 package service;
 
+import model.Currency;
+
 public interface ExchangeService {
 
     // Обмен валют

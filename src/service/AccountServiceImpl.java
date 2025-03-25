@@ -19,22 +19,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AccountServiceImpl implements AccountService {
 
     private AccountRepository accountRepository;
-    private TransactionRepository transactionRepository;
-    private AtomicInteger idGenerator;
+    private AtomicInteger idGenerator = new AtomicInteger(1);
     private UserRepository userRepository;
     private CurrencyRepository currencyRepository;
-    private UserService userService;
-    private TransactionService transactionService;
-    private AdminService adminService;
-    private HashMap<Integer, List<Account>> userAccounts = new HashMap<>();
 
-
-
-
-
-    public AccountServiceImpl(AccountRepository accountRepository, TransactionRepository transactionRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, UserRepository userRepository,
+                              CurrencyRepository currencyRepository) {
         this.accountRepository = accountRepository;
-        this.transactionRepository = transactionRepository;
+        this.userRepository = userRepository;
+        this.currencyRepository = currencyRepository;
     }
 
     // Просмотр баланса (остатка на всех счетах или каком-то конкретном счете)
@@ -50,39 +43,18 @@ public class AccountServiceImpl implements AccountService {
         if (currency != null && !currency.isEmpty()) {
             // Ищем счет с нужной валютой
             Optional<Account> accountOpt = userAccounts.stream()
-                    .filter(account -> account.getCurrency().equals(currency))
+                    .filter(account -> account.getCurrency().getCode().equals(currency))
                     .findFirst();
             // Если такой счет найден, возвращаем его баланс
             if (accountOpt.isPresent()) {
                 Account account = accountOpt.get();
-                double balance = calculateBalanceForAccount(account);
-                return balance;
+                return account.getBalance();
             } else {
                 return 0; // Если не нашли счет с такой валютой, возвращаем 0
             }
+        } else {
+            throw new IllegalArgumentException("Код валюты не может быть null");
         }
-        // Если валюта не передана, считаем общий баланс для всех счетов
-        double totalBalance = 0;
-        for (Account account : userAccounts) {
-            totalBalance += calculateBalanceForAccount(account);
-        }
-
-        return totalBalance;
-    }
-    // Вспомогательный метод для подсчета баланса по счету, включая все транзакции
-    private double calculateBalanceForAccount(Account account) {
-        // Получаем все транзакции для конкретного счета
-        List<Transaction> transactions = transactionRepository.findByAccountId(account.getAccountId());
-        double balance = account.getBalance(); // Начальный баланс счета
-        // Рассчитываем баланс, прибавляя или вычитая суммы по транзакциям
-        for (Transaction transaction : transactions) {
-            if (transaction.getType() == TypeTransaction.DEPOSIT) {
-                balance += transaction.getAmount(); // Пополнение
-            } else if (transaction.getType() == TypeTransaction.WITHDRAW) {
-                balance -= transaction.getAmount(); // Снятие
-            }
-        }
-        return balance;
     }
 
     // Открытие нового счета
@@ -109,12 +81,12 @@ public class AccountServiceImpl implements AccountService {
         }
 
 
-        List<Account> accounts = userAccounts.computeIfAbsent(userId, k -> new ArrayList<>());
+        List<Account> accounts = accountRepository.findByUser(userId);
         if (accounts.stream().anyMatch(acc -> acc.getCurrency().getCode().equals(currency))) {
             throw new IllegalStateException("Пользователь уже имеет счет в этой валюте.");
 
         }
-        Account newAccount = new Account((int) idGenerator.getAndIncrement(), userId, currencyOpt.get(), 0.0, new ArrayList<>());
+        Account newAccount = new Account(idGenerator.getAndIncrement(), userId, currencyOpt.get(), 0.0, new ArrayList<>());
         accounts.add(newAccount);
 
     }
@@ -133,7 +105,7 @@ public class AccountServiceImpl implements AccountService {
                     IllegalStateException("Заблокированным пользователям запрещено закрывать счета.");
         }
 
-        List<Account> accounts = userAccounts.get(userId);
+        List<Account> accounts = accountRepository.findByUser(userId);
         if (accounts == null || accounts.isEmpty()) {
             throw new
                     IllegalStateException("Пользователь не имеет счетов.");
@@ -146,16 +118,7 @@ public class AccountServiceImpl implements AccountService {
 
         double balance = accountToClose.getBalance();
         if (balance > 0) {
-            Account fallbackAccount = accounts.stream()
-                    .filter(acc -> ! acc.getCurrency().getCode().equals(currency))
-                    .findFirst()
-                    .orElse(null);
-            if (fallbackAccount != null) {
-                fallbackAccount.setBalance(fallbackAccount.getBalance() + balance);
-                System.out.println("Средства переведены на счет в " + fallbackAccount.getCurrency().getCode());
-            } else {
-                throw new IllegalStateException("Невозможно закрыть счет: нет другого счета для перевода средств");
-            }
+            throw new IllegalStateException("Невозможно закрыть счет: баланс больше 0");
         }
 
         accounts.remove(accountToClose);

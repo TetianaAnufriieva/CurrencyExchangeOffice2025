@@ -1,6 +1,4 @@
-import model.Role;
 import model.Transaction;
-import model.User;
 import repository.*;
 import service.*;
 import view.Menu;
@@ -22,10 +20,10 @@ public class CEOfficeApp {
 
         // Создание сервисного слоя
         UserService userService = new UserServiceImpl(userRepository);
-        AccountService accountService = new AccountServiceImpl(accountRepository, transactionRepository);
+        AccountService accountService = new AccountServiceImpl(accountRepository, userRepository, currencyRepository);
         AdminService adminService = new AdminServiceImpl(userRepository);
-        CurrencyService currencyService = new CurrencyServiceImpl(currencyRepository, accountRepository, transactionRepository);
-        ExchangeService exchangeService = new ExchangeServiceImpl();
+        CurrencyService currencyService = new CurrencyServiceImpl(currencyRepository, accountRepository);
+        ExchangeService exchangeService = new ExchangeServiceImpl(accountRepository, transactionRepository, currencyRepository);
         TransactionService transactionService = new TransactionServiceImpl(transactionRepository, accountRepository, userService);
 
         // Создание меню

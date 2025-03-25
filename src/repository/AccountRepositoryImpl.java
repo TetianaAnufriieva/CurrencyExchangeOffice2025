@@ -64,7 +64,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public List<Account> findByUser(int userId) {
-        return userAccounts.getOrDefault(userId, Collections.emptyList());
+        return userAccounts.computeIfAbsent(userId, id -> new ArrayList<>());
     }
 
     @Override
