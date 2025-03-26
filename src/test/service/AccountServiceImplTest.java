@@ -52,7 +52,7 @@ class AccountServiceImplTest {
         assertTrue(result);
 
         if (accountRepository.findByUser(userId) == null) throw new IllegalArgumentException("Пользователь не найден.");
-        if (userBlocked.getRole() == Role.BLOCKED && currency == null) throw new IllegalStateException("Невозможно закрыть счет: баланс больше 0.");
+        if (userBlocked.getRole() == Role.BLOCKED && currency == null) throw new IllegalStateException("Заблокированным пользователям запрещено закрывать счета.");
         if (balance > 0) throw new IllegalStateException("Невозможно закрыть счет: баланс больше 0.");
     }
 }
