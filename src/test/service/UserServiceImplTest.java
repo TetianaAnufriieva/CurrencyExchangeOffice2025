@@ -1,18 +1,13 @@
 package test.service;
 
 import model.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import repository.*;
 import service.*;
 
-import java.util.HashMap;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserServicemplTest {
+class UserServiceImplTest {
 
     private static UserRepository userRepository = new UserRepositoryImpl();
     private static UserService userService = new UserServiceImpl(userRepository);
