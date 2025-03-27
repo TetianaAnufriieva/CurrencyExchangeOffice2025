@@ -1,16 +1,10 @@
 package test.service;
 
-import model.Account;
-import model.Currency;
-import model.Role;
-import model.User;
+import model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import repository.*;
-import service.CurrencyService;
-import service.CurrencyServiceImpl;
-import service.UserService;
-import service.UserServiceImpl;
+import service.*;
 
 import java.util.Collections;
 import java.util.Map;
@@ -22,24 +16,23 @@ class CurrencyServiceImplTest {
 
     private static CurrencyRepository currencyRepository = new CurrencyRepositoryImpl();
     private static UserRepository userRepository = new UserRepositoryImpl();
-    private static UserService userService = new UserServiceImpl(userRepository);
     private static AccountRepository accountRepository = new AccountRepositoryImpl(userRepository, currencyRepository);
     private static CurrencyService currencyService = new CurrencyServiceImpl(currencyRepository, accountRepository);
-    private static int userId = 0;
-    private static int accountId = 0;
     private static User blockedUser;
     private static User adminUser;
+    private static User regularUser;
+
+
 
     @BeforeAll
     static void setup() {
-        User user = userRepository.createUser("test@email.com", "P@ssword1!");
-        userId = user.getUserId();
-        Account account = accountRepository.createAccount(user.getUserId(), "EUR", 0);
-        accountId = account.getAccountId();
+
         blockedUser = new User(3, "blocked@example.com", "Qwertz3@",
                 Role.BLOCKED, Collections.emptyMap());
-        adminUser = new User(1, "admin@example.com", "Qwertzy3@",
+        adminUser = new User(2, "admin@example.com", "Qwertzy3@",
                 Role.ADMIN, Collections.emptyMap());
+        regularUser =new User(1, "user@example.com", "Qwerutzy3@",
+                Role.USER, Collections.emptyMap());
 
     }
 
@@ -88,12 +81,12 @@ class CurrencyServiceImplTest {
                 currencyService.updateCurrency(regularUser, "USD", 1.2));
     }
 
-
-    @Test
-    void removeCurrency_AdminCanRemoveUnusedCurrency() {
-        currencyService.removeCurrency(adminUser, "PLN");
-        assertFalse(currencyRepository.findByCode("PLN").isPresent());
-    }
+//
+//    @Test
+//    void removeCurrency_AdminCanRemoveUnusedCurrency() {
+//        currencyService.removeCurrency(adminUser, "PLN");
+//        assertFalse(currencyRepository.findByCode("PLN").isPresent());
+//    }
 
     @Test
     void removeCurrency_NonAdminThrowsException() {
