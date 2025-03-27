@@ -171,7 +171,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new IllegalArgumentException("Валюта не может быть null или пустой.");
         }
 
-        // Проверка на положительную сумму депозита
+        // Проверка на положительную сумму снятия
         if (amount <= 0) {
             throw new IllegalArgumentException("Сумма снятия должна быть положительной.");
         }

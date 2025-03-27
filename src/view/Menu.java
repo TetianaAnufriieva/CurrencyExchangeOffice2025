@@ -126,7 +126,7 @@ public class Menu {
 
             User newUser = userService.registerUser(email, password);
             if (newUser != null) {
-                System.out.println("Пользователь " + email + " успешно зарегистрирован.");
+//                System.out.println("Пользователь " + email + " успешно зарегистрирован.");
                 return newUser;
             } else {
                 System.out.println("Регистрация не удалась.");
@@ -373,7 +373,7 @@ public class Menu {
                 promoteToAdmin();
                 break;
             case 7:
-                blockUser();
+                blockUser(user);
                 break;
             case 8:
                 allCurrencies();
@@ -439,13 +439,17 @@ public class Menu {
         System.out.println(currencyService.getAllCurrencies());
     }
 
-    private void blockUser() {
+    private void blockUser(User user) {
         try {
             System.out.print("Введите email пользователя, чтобы заблокировать: ");
             String email = scanner.nextLine();
 
             if (email.isBlank()) {
                 throw new IllegalArgumentException("Email пользователя не может быть пустым.");
+            }
+
+            if (email.equals(user.getEmail())) {
+                throw new IllegalArgumentException("Админ не может заблокировать сам себя");
             }
 
             adminService.blockUser(email);
